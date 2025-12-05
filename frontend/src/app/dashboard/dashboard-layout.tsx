@@ -130,6 +130,31 @@ export function DashboardLayout({ user }: DashboardLayoutProps) {
 		}
 	}
 
+	const handleRename = async (id: string, newName: string) => {
+		if (!currentUserId) return
+		try {
+			await axios.patch(`http://localhost:3001/documents/${id}`, {
+				name: newName
+			})
+			await fetchDocuments(currentUserId)
+		} catch (error) {
+			console.error('Error renaming document:', error)
+		}
+	}
+
+	const handleDelete = async (id: string) => {
+		if (!currentUserId) return
+		try {
+			await axios.delete(`http://localhost:3001/documents/${id}`)
+			if (selectedDocId === id) {
+				setSelectedDocId(null)
+			}
+			await fetchDocuments(currentUserId)
+		} catch (error) {
+			console.error('Error deleting document:', error)
+		}
+	}
+
 	// Map documents for Sidebar
 	const sidebarDocuments = documents.map((doc) => ({
 		id: doc.id,
@@ -161,6 +186,8 @@ export function DashboardLayout({ user }: DashboardLayoutProps) {
 					selectedDocId={selectedDocId}
 					onSelectDocument={setSelectedDocId}
 					onUpload={handleUploadClick}
+					onRename={handleRename}
+					onDelete={handleDelete}
 					isUploading={isUploading}
 					uploadError={uploadError}
 				/>
