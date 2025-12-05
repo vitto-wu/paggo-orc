@@ -45,6 +45,7 @@ interface SidebarProps {
 	onRename: (id: string, newName: string) => void
 	onDelete: (id: string) => void
 	isUploading?: boolean
+	uploadProgress?: number
 }
 
 export function Sidebar({
@@ -55,7 +56,8 @@ export function Sidebar({
 	onUpload,
 	onRename,
 	onDelete,
-	isUploading
+	isUploading,
+	uploadProgress = 0
 }: SidebarProps) {
 	const [renameId, setRenameId] = useState<string | null>(null)
 	const [newName, setNewName] = useState('')
@@ -86,22 +88,49 @@ export function Sidebar({
 				<div className="px-4 pb-4">
 					<div
 						onClick={isUploading ? undefined : onUpload}
-						className={`group border-muted-foreground/25 bg-background relative flex flex-col items-center justify-center gap-2 rounded-lg border-2 border-dashed px-4 py-8 transition-colors ${
+						className={`group border-muted-foreground/25 bg-background relative flex flex-col items-center justify-center gap-2 overflow-hidden rounded-lg border-2 border-dashed px-4 py-8 transition-all ${
 							isUploading
-								? 'cursor-not-allowed opacity-50'
+								? 'cursor-not-allowed border-solid'
 								: 'hover:border-primary/50 hover:bg-background/80 cursor-pointer'
 						}`}
 					>
-						<div className="bg-muted group-hover:bg-background rounded-full p-2">
-							<Plus className="text-muted-foreground group-hover:text-primary h-6 w-6" />
+						{isUploading && (
+							<>
+								<div
+									className={`bg-primary/10 absolute inset-0 transition-all duration-300 ease-out ${
+										uploadProgress === 100
+											? 'animate-pulse'
+											: ''
+									}`}
+									style={{ width: `${uploadProgress}%` }}
+								/>
+								<div
+									className="bg-primary absolute bottom-0 left-0 h-1 transition-all duration-300 ease-out"
+									style={{ width: `${uploadProgress}%` }}
+								/>
+							</>
+						)}
+
+						<div className="bg-muted group-hover:bg-background relative z-10 rounded-full p-2">
+							{uploadProgress === 100 && isUploading ? (
+								<div className="text-primary h-6 w-6 animate-spin rounded-full border-2 border-current border-t-transparent" />
+							) : (
+								<Plus className="text-muted-foreground group-hover:text-primary h-6 w-6" />
+							)}
 						</div>
-						<div className="text-center">
+						<div className="relative z-10 text-center">
 							<p className="text-sm font-medium">
-								{isUploading ? 'Uploading...' : 'New Image'}
+								{isUploading
+									? uploadProgress === 100
+										? 'Processing OCR...'
+										: `Uploading ${uploadProgress}%`
+									: 'New Image'}
 							</p>
 							<p className="text-muted-foreground text-xs">
 								{isUploading
-									? 'Please wait'
+									? uploadProgress === 100
+										? 'Extracting text...'
+										: 'Please wait'
 									: 'Click or drag to upload'}
 							</p>
 						</div>

@@ -38,6 +38,7 @@ export function DashboardLayout({ user }: DashboardLayoutProps) {
 		user.id || null
 	)
 	const [isUploading, setIsUploading] = useState(false)
+	const [uploadProgress, setUploadProgress] = useState(0)
 	const fileInputRef = useRef<HTMLInputElement>(null)
 
 	useEffect(() => {
@@ -99,6 +100,7 @@ export function DashboardLayout({ user }: DashboardLayoutProps) {
 		if (!file || !currentUserId) return
 
 		setIsUploading(true)
+		setUploadProgress(0)
 		const formData = new FormData()
 		formData.append('userId', currentUserId)
 		formData.append('file', file)
@@ -110,6 +112,12 @@ export function DashboardLayout({ user }: DashboardLayoutProps) {
 				{
 					headers: {
 						'Content-Type': 'multipart/form-data'
+					},
+					onUploadProgress: (progressEvent) => {
+						const percentCompleted = Math.round(
+							(progressEvent.loaded * 100) / progressEvent.total!
+						)
+						setUploadProgress(percentCompleted)
 					}
 				}
 			)
@@ -126,6 +134,7 @@ export function DashboardLayout({ user }: DashboardLayoutProps) {
 			playErrorSound()
 		} finally {
 			setIsUploading(false)
+			setUploadProgress(0)
 			if (fileInputRef.current) {
 				fileInputRef.current.value = ''
 			}
@@ -199,6 +208,7 @@ export function DashboardLayout({ user }: DashboardLayoutProps) {
 					onRename={handleRename}
 					onDelete={handleDelete}
 					isUploading={isUploading}
+					uploadProgress={uploadProgress}
 				/>
 			</ResizablePanel>
 			<ResizableHandle withHandle className="bg-background w-4" />
