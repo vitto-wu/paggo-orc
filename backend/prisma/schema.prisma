@@ -6,7 +6,6 @@
 
 generator client {
   provider = "prisma-client-js"
-  output   = "../generated/prisma"
 }
 
 datasource db {
@@ -15,10 +14,21 @@ datasource db {
   directUrl = env("DIRECT_URL")
 }
 
+model User {
+  id        String   @id
+  email     String   @unique
+  name      String?
+  image     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  documents Document[]
+}
 
 model Document {
   id            String   @id @default(uuid())
   userId        String   
+  user          User     @relation(fields: [userId], references: [id])
   fileName      String
   fileUrl       String   
   extractedText String?  @db.Text 
