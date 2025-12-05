@@ -1,11 +1,12 @@
 import type { Metadata } from 'next'
-import { Space_Mono } from 'next/font/google'
+import { JetBrains_Mono } from 'next/font/google'
 import './globals.css'
+import { SessionProvider } from 'next-auth/react'
 
-const spaceMono = Space_Mono({
+const jetbrainsMono = JetBrains_Mono({
 	subsets: ['latin'],
 	weight: ['400', '700'],
-	variable: '--font-space-mono'
+	variable: '--font-jetbrains-mono'
 })
 
 export const metadata: Metadata = {
@@ -20,8 +21,10 @@ export default function RootLayout({
 }>) {
 	return (
 		<html lang="en">
-			<body className={`${spaceMono.variable} antialiased font-main`}>
-				{children}
+			<body
+				className={`${jetbrainsMono.variable} font-main h-screen w-full antialiased`}
+			>
+				<SessionProvider>{children}</SessionProvider>
 			</body>
 		</html>
 	)
