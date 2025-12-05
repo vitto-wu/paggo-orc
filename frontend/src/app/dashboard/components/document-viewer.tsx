@@ -26,14 +26,14 @@ export function DocumentViewer({ document }: DocumentViewerProps) {
 
 	if (!document) {
 		return (
-			<div className="flex h-full flex-1 flex-col items-center justify-center p-8 text-center pointer-events-none select-none">
+			<div className="pointer-events-none flex h-full flex-1 flex-col items-center justify-center p-8 text-center select-none">
 				<div className="bg-primary/10 mb-4 rounded-full p-6">
 					<File className="text-muted-foreground/50 h-10 w-10" />
 				</div>
 				<h3 className="text-lg font-semibold">It's empty here</h3>
-				<p className="text-muted-foreground text-sm text-center">
-					Choose a document from the sidebar <br /> or upload a new one to
-					get started.
+				<p className="text-muted-foreground text-center text-sm">
+					Choose an image from the sidebar <br /> or upload a new one
+					to get started.
 				</p>
 			</div>
 		)
@@ -86,7 +86,7 @@ export function DocumentViewer({ document }: DocumentViewerProps) {
 				className={`flex-1 p-6 ${viewMode === 'raw' ? 'overflow-hidden' : 'overflow-y-auto'}`}
 			>
 				{viewMode === 'raw' ? (
-					<div className="bg-muted/10 flex h-full w-full items-center justify-center rounded-lg border border-dashed p-4 pointer-events-none">
+					<div className="bg-muted/10 pointer-events-none flex h-full w-full items-center justify-center rounded-lg border border-dashed p-4">
 						{document.imageUrl ? (
 							<img
 								src={document.imageUrl}

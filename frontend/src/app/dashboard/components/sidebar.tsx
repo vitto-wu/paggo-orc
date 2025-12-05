@@ -78,8 +78,8 @@ export function Sidebar({
 	return (
 		<>
 			<div className="flex h-full w-full flex-col pt-16">
-				<div className="@container p-6 ">
-					<h1 className="text-right text-[clamp(1.25rem,7.5cqw,1.875rem)] leading-tight font-semibold tracking-wide h-16">
+				<div className="@container p-6">
+					<h1 className="h-16 text-right text-[clamp(1.25rem,7.5cqw,1.875rem)] leading-tight font-semibold tracking-wide">
 						Hi {user.name?.split(' ')[0]}, how can I
 						<br /> <span className="mr-4">help you today?</span>
 					</h1>
@@ -99,7 +99,7 @@ export function Sidebar({
 						</div>
 						<div className="text-center">
 							<p className="text-sm font-medium">
-								{isUploading ? 'Uploading...' : 'New Document'}
+								{isUploading ? 'Uploading...' : 'New Image'}
 							</p>
 							<p className="text-muted-foreground text-xs">
 								{isUploading
@@ -117,7 +117,7 @@ export function Sidebar({
 
 				<div className="flex-1 overflow-y-auto px-4 py-2">
 					<h2 className="text-muted-foreground mb-2 px-2 text-xs font-semibold tracking-wider uppercase">
-						Recent Documents
+						Recent Images
 					</h2>
 					<div className="space-y-1">
 						{documents.map((doc) => (
@@ -145,7 +145,7 @@ export function Sidebar({
 											e.stopPropagation()
 											handleRenameClick(doc.id, doc.name)
 										}}
-										className="text-primary/50 hover:text-primary p-1 cursor-pointer transition-colors duration-300"
+										className="text-primary/50 hover:text-primary cursor-pointer p-1 transition-colors duration-300"
 										title="Rename"
 									>
 										<Pencil className="h-4 w-4" />
@@ -155,7 +155,7 @@ export function Sidebar({
 											e.stopPropagation()
 											setDeleteId(doc.id)
 										}}
-										className="text-primary/50 hover:text-destructive p-1 cursor-pointer transition-colors duration-300"
+										className="text-primary/50 hover:text-destructive cursor-pointer p-1 transition-colors duration-300"
 										title="Delete"
 									>
 										<Trash2 className="h-4 w-4" />
@@ -225,11 +225,16 @@ export function Sidebar({
 						<Button
 							variant="outline"
 							onClick={() => setRenameId(null)}
-							className='cursor-pointer'
+							className="cursor-pointer"
 						>
 							Cancel
 						</Button>
-						<Button onClick={handleRenameSubmit} className='font-bold cursor-pointer'>Save</Button>
+						<Button
+							onClick={handleRenameSubmit}
+							className="cursor-pointer font-bold"
+						>
+							Save
+						</Button>
 					</DialogFooter>
 				</DialogContent>
 			</Dialog>
@@ -247,7 +252,10 @@ export function Sidebar({
 						</AlertDialogDescription>
 					</AlertDialogHeader>
 					<AlertDialogFooter>
-						<AlertDialogCancel onClick={() => setDeleteId(null)} className='cursor-pointer'>
+						<AlertDialogCancel
+							onClick={() => setDeleteId(null)}
+							className="cursor-pointer"
+						>
 							Cancel
 						</AlertDialogCancel>
 						<AlertDialogAction
@@ -257,7 +265,7 @@ export function Sidebar({
 									setDeleteId(null)
 								}
 							}}
-							className="bg-destructive font-bold hover:bg-destructive/90 cursor-pointer"
+							className="bg-destructive hover:bg-destructive/90 cursor-pointer font-bold"
 						>
 							Delete
 						</AlertDialogAction>

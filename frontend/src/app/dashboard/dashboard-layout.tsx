@@ -104,7 +104,7 @@ export function DashboardLayout({ user }: DashboardLayoutProps) {
 		formData.append('file', file)
 
 		try {
-			await axios.post(
+			const response = await axios.post(
 				'http://localhost:3001/documents/upload',
 				formData,
 				{
@@ -115,6 +115,9 @@ export function DashboardLayout({ user }: DashboardLayoutProps) {
 			)
 
 			await fetchDocuments(currentUserId)
+			if (response.data && response.data.id) {
+				setSelectedDocId(response.data.id)
+			}
 		} catch (error) {
 			console.error('Error uploading file:', error)
 			setUploadError('Failed to upload. Check connection.')
@@ -168,7 +171,7 @@ export function DashboardLayout({ user }: DashboardLayoutProps) {
 				ref={fileInputRef}
 				className="hidden"
 				onChange={handleFileChange}
-				accept=".pdf,.png,.jpg,.jpeg"
+				accept=".png,.jpg,.jpeg"
 			/>
 			<ResizablePanel
 				className="bg-muted rounded-2xl"
@@ -202,7 +205,7 @@ export function DashboardLayout({ user }: DashboardLayoutProps) {
 				defaultSize={25}
 				minSize={25}
 			>
-				<ChatPanel />
+				<ChatPanel documentId={selectedDocId} />
 			</ResizablePanel>
 		</ResizablePanelGroup>
 	)

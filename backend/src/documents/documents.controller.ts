@@ -17,7 +17,19 @@ export class DocumentsController {
   constructor(private readonly documentsService: DocumentsService) {}
 
   @Post('upload')
-  @UseInterceptors(FileInterceptor('file'))
+  @UseInterceptors(
+    FileInterceptor('file', {
+      fileFilter: (req, file, callback) => {
+        if (!file.mimetype.match(/\/(jpg|jpeg|png)$/)) {
+          return callback(
+            new Error('Only image files (jpg, jpeg, png) are allowed!'),
+            false,
+          );
+        }
+        callback(null, true);
+      },
+    }),
+  )
   async uploadDocument(
     @UploadedFile() file: Express.Multer.File,
     @Body('userId') userId: string,
