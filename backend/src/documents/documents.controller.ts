@@ -1,60 +1,47 @@
-import { 
-  Controller, 
-  Post, 
-  UseInterceptors, 
-  UploadedFile, 
-  BadRequestException, 
-  Body
+import {
+  Controller,
+  Post,
+  UseInterceptors,
+  UploadedFile,
+  Body,
+  Get,
+  Param,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { SupabaseService } from '../supabase/supabase.service';
-import { PrismaService } from '../prisma/prisma.service';
+import { DocumentsService } from './documents.service';
 
 @Controller('documents')
 export class DocumentsController {
-  constructor(
-    private readonly supabaseService: SupabaseService,
-    private readonly prisma: PrismaService,
-  ) {}
+  constructor(private readonly documentsService: DocumentsService) {}
 
   @Post('upload')
-  @UseInterceptors(FileInterceptor('file')) // 'file' deve bater com o nome do campo no Frontend
-  async uploadFile(@UploadedFile() file: Express.Multer.File, @Body() body: any) {
-    
-    // 1. Validação básica
-    if (!file) {
-      throw new BadRequestException('Nenhum arquivo enviado');
+  @UseInterceptors(FileInterceptor('file'))
+  async uploadDocument(
+    @UploadedFile() file: Express.Multer.File,
+    @Body('userId') userId: string,
+  ) {
+    console.log('Uploading document for userId:', userId);
+    if (!userId) {
+      throw new Error('UserId is missing in the request body');
     }
+    return this.documentsService.processDocument(file, userId);
+  }
 
-    // 2. Simulação do Auth (Depois trocaremos pelo req.user.id do Clerk)
-    // TODO: Pegar o userId real do Token do Clerk
-    const userId = body.userId || "user_123_test"; 
+  @Get(':userId')
+  async getDocuments(@Param('userId') userId: string) {
+    return this.documentsService.getDocuments(userId);
+  }
 
-    console.log(`Recebendo arquivo: ${file.originalname} para o user: ${userId}`);
+  @Get('details/:id')
+  async getDocument(@Param('id') id: string) {
+    return this.documentsService.getDocument(id);
+  }
 
-    try {
-      // 3. Upload para o Supabase Storage
-      const uploadResult = await this.supabaseService.uploadFile(file, userId);
-
-      // 4. Salvar registro no Banco de Dados (Prisma)
-      const document = await this.prisma.document.create({
-        data: {
-          fileName: uploadResult.fileName,
-          fileUrl: uploadResult.publicUrl,
-          userId: userId,
-          extractedText: "", // Ainda vazio, preencheremos com IA depois
-          summary: "",       // Ainda vazio
-        },
-      });
-
-      return {
-        message: 'Upload realizado com sucesso!',
-        document: document,
-      };
-
-    } catch (error) {
-      console.error(error);
-      throw new BadRequestException('Erro ao processar upload: ' + error.message);
-    }
+  @Post(':id/chat')
+  async addMessage(
+    @Param('id') id: string,
+    @Body() body: { content: string; role: string },
+  ) {
+    return this.documentsService.addMessage(id, body.content, body.role);
   }
 }

@@ -41,7 +41,7 @@ export function Sidebar({
 					className={`group border-muted-foreground/25 bg-background relative flex flex-col items-center justify-center gap-2 rounded-lg border-2 border-dashed px-4 py-8 transition-colors ${
 						isUploading
 							? 'cursor-not-allowed opacity-50'
-							: 'hover:border-primary/50 hover:bg-accent cursor-pointer'
+							: 'hover:border-primary/50 hover:bg-background/80 cursor-pointer'
 					}`}
 				>
 					<div className="bg-muted group-hover:bg-background rounded-full p-2">
