@@ -41,7 +41,7 @@ export function DocumentViewer({ document }: DocumentViewerProps) {
 		try {
 			// Fetch full document details including messages
 			const res = await axios.get(
-				`http://localhost:3001/documents/details/${document.id}`
+				`${process.env.NEXT_PUBLIC_API_URL}/documents/details/${document.id}`
 			)
 			const fullDoc = res.data
 			const messages = fullDoc.messages || []

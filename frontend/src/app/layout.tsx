@@ -23,7 +23,7 @@ export default function RootLayout({
 	return (
 		<html lang="en">
 			<body
-				className={`${jetbrainsMono.variable} font-main h-screen w-full antialiased`}
+				className={`${jetbrainsMono.variable} font-main h-screen w-full antialiased selection:bg-primary selection:text-white`}
 			>
 				<SessionProvider>{children}</SessionProvider>
 				<Toaster richColors />

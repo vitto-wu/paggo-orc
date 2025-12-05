@@ -44,7 +44,7 @@ export function DashboardLayout({ user }: DashboardLayoutProps) {
 	useEffect(() => {
 		if (user.id) {
 			axios
-				.post('http://localhost:3001/users', {
+				.post(`${process.env.NEXT_PUBLIC_API_URL}/users`, {
 					id: user.id,
 					email: user.email || '',
 					name: user.name || '',
@@ -70,7 +70,7 @@ export function DashboardLayout({ user }: DashboardLayoutProps) {
 	const fetchDocuments = async (userId: string) => {
 		try {
 			const res = await axios.get(
-				`http://localhost:3001/documents/${userId}`
+				`${process.env.NEXT_PUBLIC_API_URL}/documents/${userId}`
 			)
 			setDocuments(res.data)
 		} catch (error) {
@@ -107,7 +107,7 @@ export function DashboardLayout({ user }: DashboardLayoutProps) {
 
 		try {
 			const response = await axios.post(
-				'http://localhost:3001/documents/upload',
+				`${process.env.NEXT_PUBLIC_API_URL}/documents/upload`,
 				formData,
 				{
 					headers: {
@@ -144,9 +144,12 @@ export function DashboardLayout({ user }: DashboardLayoutProps) {
 	const handleRename = async (id: string, newName: string) => {
 		if (!currentUserId) return
 		try {
-			await axios.patch(`http://localhost:3001/documents/${id}`, {
-				name: newName
-			})
+			await axios.patch(
+				`${process.env.NEXT_PUBLIC_API_URL}/documents/${id}`,
+				{
+					name: newName
+				}
+			)
 			await fetchDocuments(currentUserId)
 			toast.success('Document renamed successfully')
 			playSuccessSound()
@@ -160,7 +163,9 @@ export function DashboardLayout({ user }: DashboardLayoutProps) {
 	const handleDelete = async (id: string) => {
 		if (!currentUserId) return
 		try {
-			await axios.delete(`http://localhost:3001/documents/${id}`)
+			await axios.delete(
+				`${process.env.NEXT_PUBLIC_API_URL}/documents/${id}`
+			)
 			if (selectedDocId === id) {
 				setSelectedDocId(null)
 			}

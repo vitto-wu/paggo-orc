@@ -40,7 +40,7 @@ export function ChatPanel({ documentId }: ChatPanelProps) {
 		const fetchHistory = async () => {
 			try {
 				const res = await axios.get(
-					`http://localhost:3001/documents/details/${documentId}`
+					`${process.env.NEXT_PUBLIC_API_URL}/documents/details/${documentId}`
 				)
 				if (res.data && res.data.messages) {
 					setMessages(res.data.messages)
@@ -70,7 +70,7 @@ export function ChatPanel({ documentId }: ChatPanelProps) {
 
 		try {
 			const res = await axios.post(
-				`http://localhost:3001/documents/${documentId}/chat`,
+				`${process.env.NEXT_PUBLIC_API_URL}/documents/${documentId}/chat`,
 				{
 					content: newMessage.content,
 					role: 'user'
