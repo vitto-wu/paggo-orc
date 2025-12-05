@@ -45,7 +45,6 @@ interface SidebarProps {
 	onRename: (id: string, newName: string) => void
 	onDelete: (id: string) => void
 	isUploading?: boolean
-	uploadError?: string | null
 }
 
 export function Sidebar({
@@ -56,8 +55,7 @@ export function Sidebar({
 	onUpload,
 	onRename,
 	onDelete,
-	isUploading,
-	uploadError
+	isUploading
 }: SidebarProps) {
 	const [renameId, setRenameId] = useState<string | null>(null)
 	const [newName, setNewName] = useState('')
@@ -108,11 +106,6 @@ export function Sidebar({
 							</p>
 						</div>
 					</div>
-					{uploadError && (
-						<p className="text-destructive mt-2 text-center text-xs font-medium">
-							{uploadError}
-						</p>
-					)}
 				</div>
 
 				<div className="flex-1 overflow-y-auto px-4 py-2">

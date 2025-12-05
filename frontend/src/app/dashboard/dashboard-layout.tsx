@@ -5,6 +5,8 @@ import { Sidebar } from './components/sidebar'
 import { DocumentViewer } from './components/document-viewer'
 import { ChatPanel } from './components/chat-panel'
 import axios from 'axios'
+import { toast } from 'sonner'
+import { playSuccessSound, playErrorSound } from '@/lib/sounds'
 
 import {
 	ResizableHandle,
@@ -36,7 +38,6 @@ export function DashboardLayout({ user }: DashboardLayoutProps) {
 		user.id || null
 	)
 	const [isUploading, setIsUploading] = useState(false)
-	const [uploadError, setUploadError] = useState<string | null>(null)
 	const fileInputRef = useRef<HTMLInputElement>(null)
 
 	useEffect(() => {
@@ -98,7 +99,6 @@ export function DashboardLayout({ user }: DashboardLayoutProps) {
 		if (!file || !currentUserId) return
 
 		setIsUploading(true)
-		setUploadError(null)
 		const formData = new FormData()
 		formData.append('userId', currentUserId)
 		formData.append('file', file)
@@ -118,9 +118,12 @@ export function DashboardLayout({ user }: DashboardLayoutProps) {
 			if (response.data && response.data.id) {
 				setSelectedDocId(response.data.id)
 			}
+			toast.success('Image uploaded successfully')
+			playSuccessSound()
 		} catch (error) {
 			console.error('Error uploading file:', error)
-			setUploadError('Failed to upload. Check connection.')
+			toast.error('Failed to upload image. Please try again.')
+			playErrorSound()
 		} finally {
 			setIsUploading(false)
 			if (fileInputRef.current) {
@@ -136,8 +139,12 @@ export function DashboardLayout({ user }: DashboardLayoutProps) {
 				name: newName
 			})
 			await fetchDocuments(currentUserId)
+			toast.success('Document renamed successfully')
+			playSuccessSound()
 		} catch (error) {
 			console.error('Error renaming document:', error)
+			toast.error('Failed to rename document')
+			playErrorSound()
 		}
 	}
 
@@ -149,8 +156,12 @@ export function DashboardLayout({ user }: DashboardLayoutProps) {
 				setSelectedDocId(null)
 			}
 			await fetchDocuments(currentUserId)
+			toast.success('Document deleted successfully')
+			playSuccessSound()
 		} catch (error) {
 			console.error('Error deleting document:', error)
+			toast.error('Failed to delete document')
+			playErrorSound()
 		}
 	}
 
@@ -188,7 +199,6 @@ export function DashboardLayout({ user }: DashboardLayoutProps) {
 					onRename={handleRename}
 					onDelete={handleDelete}
 					isUploading={isUploading}
-					uploadError={uploadError}
 				/>
 			</ResizablePanel>
 			<ResizableHandle withHandle className="bg-background w-4" />

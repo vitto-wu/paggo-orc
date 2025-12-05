@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { JetBrains_Mono } from 'next/font/google'
 import './globals.css'
 import { SessionProvider } from 'next-auth/react'
+import { Toaster } from 'sonner'
 
 const jetbrainsMono = JetBrains_Mono({
 	subsets: ['latin'],
@@ -25,6 +26,7 @@ export default function RootLayout({
 				className={`${jetbrainsMono.variable} font-main h-screen w-full antialiased`}
 			>
 				<SessionProvider>{children}</SessionProvider>
+				<Toaster richColors />
 			</body>
 		</html>
 	)
