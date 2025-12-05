@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import Image from 'next/image'
 import {
 	Plus,
 	FileText,
@@ -190,12 +191,14 @@ export function Sidebar({
 
 				<div className="p-4">
 					<div className="bg-background ring-border flex items-center gap-3 rounded-lg p-3 shadow-sm ring-1">
-						<div className="bg-primary/10 text-primary pointer-events-none flex h-10 w-10 items-center justify-center rounded-full">
+						<div className="bg-primary/10 text-primary pointer-events-none relative flex h-10 w-10 items-center justify-center overflow-hidden rounded-full">
 							{user.image ? (
-								<img
+								<Image
 									src={user.image}
 									alt={user.name || 'User'}
-									className="h-full w-full rounded-full object-cover"
+									fill
+									className="object-cover"
+									unoptimized
 								/>
 							) : (
 								<UserIcon className="h-5 w-5" />

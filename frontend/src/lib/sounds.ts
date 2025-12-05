@@ -1,7 +1,9 @@
 export function playSuccessSound() {
 	try {
 		const AudioContext =
-			window.AudioContext || (window as any).webkitAudioContext
+			window.AudioContext ||
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+			(window as any).webkitAudioContext
 		if (!AudioContext) return
 
 		const ctx = new AudioContext()
@@ -28,7 +30,9 @@ export function playSuccessSound() {
 export function playErrorSound() {
 	try {
 		const AudioContext =
-			window.AudioContext || (window as any).webkitAudioContext
+			window.AudioContext ||
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+			(window as any).webkitAudioContext
 		if (!AudioContext) return
 
 		const ctx = new AudioContext()

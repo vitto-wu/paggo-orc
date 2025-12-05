@@ -149,40 +149,40 @@ export function ChatPanel({ documentId }: ChatPanelProps) {
 								<ReactMarkdown
 									remarkPlugins={[remarkGfm]}
 									components={{
-										ul: ({ node, ...props }) => (
+										ul: ({ ...props }) => (
 											<ul
 												className="my-2 list-disc pl-4"
 												{...props}
 											/>
 										),
-										ol: ({ node, ...props }) => (
+										ol: ({ ...props }) => (
 											<ol
 												className="my-2 list-decimal pl-4"
 												{...props}
 											/>
 										),
-										h1: ({ node, ...props }) => (
+										h1: ({ ...props }) => (
 											<h1
 												className="my-2 text-xl font-bold"
 												{...props}
 											/>
 										),
-										h2: ({ node, ...props }) => (
+										h2: ({ ...props }) => (
 											<h2
 												className="my-2 text-lg font-bold"
 												{...props}
 											/>
 										),
-										h3: ({ node, ...props }) => (
+										h3: ({ ...props }) => (
 											<h3
 												className="text-md my-2 font-bold"
 												{...props}
 											/>
 										),
-										p: ({ node, ...props }) => (
+										p: ({ ...props }) => (
 											<p className="my-1" {...props} />
 										),
-										strong: ({ node, ...props }) => (
+										strong: ({ ...props }) => (
 											<strong
 												className="font-bold"
 												{...props}

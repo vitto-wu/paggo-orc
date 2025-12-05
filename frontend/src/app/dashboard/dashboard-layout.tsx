@@ -59,7 +59,7 @@ export function DashboardLayout({ user }: DashboardLayoutProps) {
 					console.error('Client-side user sync failed', err)
 				)
 		}
-	}, [user.id])
+	}, [user.id, user.email, user.name, user.image])
 
 	useEffect(() => {
 		if (currentUserId) {

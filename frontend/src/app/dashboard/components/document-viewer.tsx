@@ -9,7 +9,13 @@ import {
 	Download
 } from 'lucide-react'
 import { useState } from 'react'
+import Image from 'next/image'
 import axios from 'axios'
+
+interface Message {
+	role: string
+	content: string
+}
 
 interface DocumentViewerProps {
 	document: {
@@ -53,7 +59,7 @@ export function DocumentViewer({ document }: DocumentViewerProps) {
 			content += `${document.content || ''}\n\n`
 			content += `--- LLM Interactions ---\n`
 
-			messages.forEach((msg: any) => {
+			messages.forEach((msg: Message) => {
 				content += `${msg.role === 'user' ? 'User' : 'Assistant'}: ${msg.content}\n\n`
 			})
 
@@ -80,7 +86,7 @@ export function DocumentViewer({ document }: DocumentViewerProps) {
 				<div className="bg-primary/10 mb-4 rounded-full p-6">
 					<File className="text-muted-foreground/50 h-10 w-10" />
 				</div>
-				<h3 className="text-lg font-semibold">It's empty here</h3>
+				<h3 className="text-lg font-semibold">It&apos;s empty here</h3>
 				<p className="text-muted-foreground text-center text-sm">
 					Choose an image from the sidebar <br /> or upload a new one
 					to get started.
@@ -146,12 +152,14 @@ export function DocumentViewer({ document }: DocumentViewerProps) {
 				className={`flex-1 p-6 ${viewMode === 'raw' ? 'overflow-hidden' : 'overflow-y-auto'}`}
 			>
 				{viewMode === 'raw' ? (
-					<div className="bg-muted/10 pointer-events-none flex h-full w-full items-center justify-center rounded-lg border border-dashed p-4">
+					<div className="bg-muted/10 relative flex h-full w-full items-center justify-center rounded-lg border border-dashed p-4">
 						{document.imageUrl ? (
-							<img
+							<Image
 								src={document.imageUrl}
 								alt={document.name}
-								className="max-h-full max-w-full rounded object-contain shadow-sm"
+								fill
+								className="rounded object-contain shadow-sm"
+								unoptimized
 							/>
 						) : (
 							<div className="text-muted-foreground text-center">
