@@ -1,12 +1,21 @@
 'use client'
 
-import { File, Copy, Image as ImageIcon, FileText, Check } from 'lucide-react'
+import {
+	File,
+	Copy,
+	Image as ImageIcon,
+	FileText,
+	Check,
+	Download
+} from 'lucide-react'
 import { useState } from 'react'
+import axios from 'axios'
 
 interface DocumentViewerProps {
 	document: {
 		id: string
 		name: string
+		date?: string
 		content?: string
 		imageUrl?: string
 	} | null
@@ -15,12 +24,53 @@ interface DocumentViewerProps {
 export function DocumentViewer({ document }: DocumentViewerProps) {
 	const [viewMode, setViewMode] = useState<'raw' | 'text'>('text')
 	const [copied, setCopied] = useState(false)
+	const [isDownloading, setIsDownloading] = useState(false)
 
 	const handleCopy = () => {
 		if (document?.content) {
 			navigator.clipboard.writeText(document.content)
 			setCopied(true)
 			setTimeout(() => setCopied(false), 2000)
+		}
+	}
+
+	const handleDownload = async () => {
+		if (!document) return
+
+		setIsDownloading(true)
+		try {
+			// Fetch full document details including messages
+			const res = await axios.get(
+				`http://localhost:3001/documents/details/${document.id}`
+			)
+			const fullDoc = res.data
+			const messages = fullDoc.messages || []
+
+			// Construct the content
+			let content = `Document Name: ${document.name}\n`
+			content += `Date: ${document.date || new Date().toLocaleString()}\n\n`
+			content += `--- Extracted Text ---\n`
+			content += `${document.content || ''}\n\n`
+			content += `--- LLM Interactions ---\n`
+
+			messages.forEach((msg: any) => {
+				content += `${msg.role === 'user' ? 'User' : 'Assistant'}: ${msg.content}\n\n`
+			})
+
+			// Create blob and download
+			const blob = new Blob([content], { type: 'text/plain' })
+			const url = window.URL.createObjectURL(blob)
+			const a = window.document.createElement('a')
+			a.href = url
+			a.download = `${document.name.replace(/\.[^/.]+$/, '')}_analysis.txt`
+			window.document.body.appendChild(a)
+			a.click()
+			window.URL.revokeObjectURL(url)
+			window.document.body.removeChild(a)
+		} catch (error) {
+			console.error('Failed to download document analysis:', error)
+		} finally {
+			setIsDownloading(false)
 		}
 	}
 
@@ -67,19 +117,29 @@ export function DocumentViewer({ document }: DocumentViewerProps) {
 					</button>
 				</div>
 
-				{viewMode === 'text' && (
+				<div className="flex items-center gap-2">
 					<button
-						onClick={handleCopy}
-						className="bg-background hover:bg-accent flex cursor-pointer items-center gap-2 rounded-md border px-3 py-1.5 text-xs font-medium transition-colors"
+						onClick={handleDownload}
+						disabled={isDownloading}
+						className="bg-background hover:bg-accent flex cursor-pointer items-center gap-2 rounded-md border px-3 py-1.5 text-xs font-medium transition-colors disabled:opacity-50"
 					>
-						{copied ? (
-							<Check className="h-3.5 w-3.5 text-green-500" />
-						) : (
-							<Copy className="h-3.5 w-3.5" />
-						)}
-						{copied ? 'Copied' : 'Copy Text'}
+						<Download className="h-3.5 w-3.5" />
+						{isDownloading ? 'Downloading...' : 'Download Analysis'}
 					</button>
-				)}
+					{viewMode === 'text' && (
+						<button
+							onClick={handleCopy}
+							className="bg-background hover:bg-accent flex cursor-pointer items-center gap-2 rounded-md border px-3 py-1.5 text-xs font-medium transition-colors"
+						>
+							{copied ? (
+								<Check className="h-3.5 w-3.5 text-green-500" />
+							) : (
+								<Copy className="h-3.5 w-3.5" />
+							)}
+							{copied ? 'Copied' : 'Copy Text'}
+						</button>
+					)}
+				</div>
 			</div>
 
 			<div
