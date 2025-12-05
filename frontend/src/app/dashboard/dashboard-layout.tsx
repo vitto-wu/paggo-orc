@@ -41,7 +41,6 @@ export function DashboardLayout({ user }: DashboardLayoutProps) {
 
 	useEffect(() => {
 		if (user.id) {
-			// Sync user to ensure they exist in DB (useful if DB was reset)
 			axios
 				.post('http://localhost:3001/users', {
 					id: user.id,
@@ -80,9 +79,6 @@ export function DashboardLayout({ user }: DashboardLayoutProps) {
 	const selectedDocument =
 		documents.find((doc) => doc.id === selectedDocId) || null
 
-	// Map backend document to frontend format expected by DocumentViewer
-	// DocumentViewer expects: { id, name, date, content, imageUrl }
-	// Backend returns: { id, fileName, createdAt, extractedText, fileUrl }
 	const viewerDocument = selectedDocument
 		? {
 				id: selectedDocument.id,

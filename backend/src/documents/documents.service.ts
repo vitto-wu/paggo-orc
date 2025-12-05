@@ -1,27 +1,48 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { createWorker } from 'tesseract.js';
+import { createClient, SupabaseClient } from '@supabase/supabase-js';
 
 @Injectable()
 export class DocumentsService {
-  constructor(private prisma: PrismaService) {}
+  private supabase: SupabaseClient;
+
+  constructor(private prisma: PrismaService) {
+    this.supabase = createClient(
+      process.env.SUPABASE_URL!,
+      process.env.SUPABASE_KEY!,
+    ) as SupabaseClient;
+  }
 
   async processDocument(file: Express.Multer.File, userId: string) {
-    // 1. OCR Extraction
-    const worker = await createWorker('eng'); // Default to English, can be parameterized
+    const worker = await createWorker('eng');
     const {
       data: { text },
     } = await worker.recognize(file.buffer);
     await worker.terminate();
 
-    // 2. Save to Database
-    // Note: In a real app, we would upload 'file' to a storage service (S3, Supabase Storage)
-    // and save the URL. Here we will simulate a URL or just store the filename if local.
-    // For this example, I'll assume we might store it later or just keep the record.
-    // I'll use a placeholder URL.
-    const fileUrl = `https://placeholder.storage/${file.originalname}`;
+    // 2. Save to Database (Supabase Storage)
+    const fileName = `${userId}/${Date.now()}_${file.originalname}`;
 
-    // Ensure user exists before creating document
+    const { error: uploadError } = await this.supabase.storage
+      .from('documents')
+      .upload(fileName, file.buffer, {
+        contentType: file.mimetype,
+        upsert: false,
+      });
+
+    if (uploadError) {
+      throw new Error(
+        `Failed to upload file to Supabase: ${uploadError.message}`,
+      );
+    }
+
+    const { data: publicUrlData } = this.supabase.storage
+      .from('documents')
+      .getPublicUrl(fileName);
+
+    const fileUrl = publicUrlData.publicUrl;
+
     const userExists = await this.prisma.user.findUnique({
       where: { id: userId },
     });
@@ -38,13 +59,9 @@ export class DocumentsService {
         fileUrl: fileUrl,
         extractedText: text,
         userId: userId,
-        summary: '', // To be filled by LLM later
+        summary: '',
       },
     });
-
-    // 3. Create initial system message or history if needed (optional based on prompt)
-    // "salve o historico de interações com a ai de cada documento"
-    // We can initialize an empty history or just leave it for when the user asks questions.
 
     return document;
   }
@@ -70,6 +87,19 @@ export class DocumentsService {
         role,
         documentId,
       },
+    });
+  }
+
+  async deleteDocument(id: string) {
+    return this.prisma.document.delete({
+      where: { id },
+    });
+  }
+
+  async renameDocument(id: string, newName: string) {
+    return this.prisma.document.update({
+      where: { id },
+      data: { fileName: newName },
     });
   }
 }

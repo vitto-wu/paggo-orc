@@ -21,8 +21,6 @@ export class UsersService {
     });
 
     if (userByEmail) {
-      // User exists but with a different ID.
-      // We return the existing user so the frontend can adapt if needed.
       return userByEmail;
     }
 

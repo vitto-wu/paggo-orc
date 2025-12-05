@@ -6,6 +6,8 @@ import {
   Body,
   Get,
   Param,
+  Delete,
+  Patch,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { DocumentsService } from './documents.service';
@@ -43,5 +45,18 @@ export class DocumentsController {
     @Body() body: { content: string; role: string },
   ) {
     return this.documentsService.addMessage(id, body.content, body.role);
+  }
+
+  @Delete(':id')
+  async deleteDocument(@Param('id') id: string) {
+    return this.documentsService.deleteDocument(id);
+  }
+
+  @Patch(':id')
+  async renameDocument(
+    @Param('id') id: string,
+    @Body() body: { name: string },
+  ) {
+    return this.documentsService.renameDocument(id, body.name);
   }
 }
